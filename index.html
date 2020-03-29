@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<HTML>
+    <head>
+        <title> skola </title>
+        <style>
+            .table{
+                display table;
+                border-collapse: collapse;
+                
+            }
+            .row{
+                display table-row;
+            }
+            .cell{
+                display: table-cell;
+                background-color:red;
+                border: 1px solid gray;
+                text-align:center;
+                vertical-align:middle;
+                height: 50px;
+                width: 50px;
+                cursor: pointer;
+            }
+            .cell:hover { background-color: yellow; }
+            .button {
+                 background-color: red;
+                 border: none;
+                 color: white;
+                 padding: 15px 25px;
+                 text-align: center;
+                 font-size: 16px;
+                 cursor: pointer;
+            }
+            .button:hover { background-color: yellow; }
+        </style>
+        
+    </head>
+    <body id="skola">
+        <label for="width">Platums:</label>
+        <input type="text" id="width" name="width" size="50"><br><br>
+        <label for="height">Augstums:</label>
+        <input type="text" id="height" name="height" size="50"><br><br>
+        <button id="button" class="button" onclick="click();" >Sākt spēli!</button> <br><br>
+        <script>
+            var ar = [];
+            var skaits = 0;
+            var skaitlis1 = 0;
+            var skaitlis2 = 0;
+            var ind = 0;
+            var v = [];
+            var ex = 0;
+            function sort(n){
+                let x = [];
+                for(let i=1; i<=n/2; i++){
+                    x[i-1] = i;
+                    x[i+n/2-1] = n*i;
+                }
+                return x;
+            }
+            
+            function test(a, b, n){
+                let a1 = a.innerHTML;
+                let b1 = b.innerHTML;
+                if(a1==b1/n||b1==a1/n){
+                    if(!v.includes(a1)){
+                        v[v.length]=a1;
+                        v[v.length]=b1;
+                    }
+                    if(v.length==n){
+                        setTimeout(function(){
+                            alert("APSVEICU AR UZVARU!");
+                            victory();
+                        }, 1000);
+                    }
+                    return true;
+                }
+                return false;
+            }
+            
+            
+            function rand(x){
+                let l = x.length;
+                let out = [];
+                for(let i = 0; i<l; i++){
+                    let d = Math.floor(l*Math.random());
+                    while(out[d]!=null){
+                        d = (d+1)%l;
+                    }
+                    out[d]=x[i];
+                }
+                return out;
+            }
+            
+            function victory(){
+                destroy();
+            }
+            
+            function removeElement(elementId) {
+                // Removes an element from the document
+                var element = document.getElementById(elementId);
+                element.parentNode.removeChild(element);
+            }
+            
+            function destroy(){
+                if(ex!=0){
+                    removeElement("table");
+                    ex = 0;
+                }
+                ar = [];
+                skaits = 0;
+                skaitlis1 = 0;
+                skaitlis2 = 0;
+                ind = 0;
+                v = [];
+            }
+            
+            function event(sk, n){
+                sk.style.display="block";
+                if(skaits%2==0){
+                    skaitlis1 = sk;
+                }else{
+                    skaitlis2 = sk
+                    if(!test(skaitlis1, skaitlis2, n)){
+                        ind=1;
+                        setTimeout(function(){
+                            skaitlis1.style.display="none";
+                            skaitlis2.style.display="none";
+                            ind=0;
+                        }, 1000);
+                    }
+                }
+                skaits++
+            }
+            
+            function draw(width, height){
+                ex = 1;
+                let tab = document.createElement("DIV");
+                tab.id = "table";
+                tab.className = "table";
+                for(let i = 0; i<height; i++){
+                    let row = document.createElement("DIV");
+                    row.className ="row";
+                    for(let j = 0; j<width; j++){
+                        let cell = document.createElement("DIV");
+                        cell.className="cell";
+                        cell.id="cell";
+                        let sk = document.createElement("P");
+                        sk.innerHTML = ar[width*i+j];
+                        sk.className="sk";
+                        sk.style.display="none"
+                        cell.appendChild(sk);
+                        cell.onclick = function(){if(!v.includes(sk.innerHTML)){if(ind==0)event(sk, width*height)}};
+                        row.appendChild(cell);
+                    }
+                    tab.appendChild(row);
+                }
+                document.getElementById("skola").appendChild(tab);
+            }
+            
+            document.getElementById("button").onclick = click;
+            function click(){
+                destroy();
+                let width = document.getElementById("width").value;
+                let height = document.getElementById("height").value;
+                if(width%2==0||height%2==0){
+                    ar = rand(sort(width*height));
+                    draw(width, height);
+                }else{
+                    alert("VISMAZ VIENAM NO IEVADĪTAJIEM SKAITĻIEM IR JĀBŪT PĀRA!");
+                }
+            }
+        </script>
+    </body>
+</html> 
